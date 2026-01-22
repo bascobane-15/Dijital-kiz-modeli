@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="NussTwin-Home", layout="wide")
-
-st.title("🏠 NussTwin-Home")
+st.set_page_config(page_title="NursTwin-Home", layout="wide")
+st.title("🏠 NursTwin-Home")
 st.subheader("Evde Bakım Hastası için Dijital İkiz Karar Destek Paneli")
 
 # -------------------
@@ -66,3 +65,4 @@ with col2:
 
     df = pd.DataFrame(data)
     st.bar_chart(df.set_index("Parametre"))
+
