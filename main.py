@@ -43,12 +43,42 @@ with col1:
     st.header("🔢 Genel Risk Skoru")
     st.metric(label="Risk Skoru", value=f"%{risk}")
 
-    if risk <= 40:
-        st.success("🟢 Stabil – Rutin izlem yeterli")
-    elif risk <= 70:
-        st.warning("🟡 Riskli – Yakın izlem önerilir")
-    else:
-        st.error("🔴 Yüksek Risk – Müdahale gerekli")
+if risk <= 40:
+    st.success("🟢 Stabil – Rutin izlem yeterli")
+
+    st.markdown("### 🩺 NANDA Hemşirelik Tanısı")
+    st.info("Sağlığı Geliştirmeye Hazır Olma")
+
+    st.markdown("### 📩 Hemşire Bilgilendirme Mesajı")
+    st.write(
+        "Hasta fizyolojik ve psikososyal açıdan stabil görünmektedir. "
+        "Rutin izlem ve mevcut bakım planının sürdürülmesi önerilir."
+    )
+
+elif risk <= 70:
+    st.warning("🟡 Riskli – Yakın izlem önerilir")
+
+    st.markdown("### 🩺 NANDA Hemşirelik Tanısı")
+    st.info("Deri Bütünlüğünde Bozulma Riski")
+
+    st.markdown("### 📩 Hemşire Bilgilendirme Mesajı")
+    st.write(
+        "Hastada hareketlilik azalması ve fizyolojik değişiklikler gözlenmektedir. "
+        "Pozisyon değişim aralıklarının kısaltılması ve cilt bütünlüğünün yakından izlenmesi önerilir."
+    )
+
+else:
+    st.error("🔴 Yüksek Risk – Müdahale gerekli")
+
+    st.markdown("### 🩺 NANDA Hemşirelik Tanısı")
+    st.info("Gaz Değişiminde Bozulma / Aktivite İntoleransı")
+
+    st.markdown("### 📩 Hemşire Acil Uyarı Mesajı")
+    st.write(
+        "Hastada ciddi fizyolojik riskler tespit edilmiştir. "
+        "Derhal hemşirelik müdahalesi uygulanmalı, gerekirse hekim bilgilendirilmelidir."
+    )
+
 
 with col2:
     st.header("📊 Risk Bileşenleri")
@@ -65,4 +95,5 @@ with col2:
 
     df = pd.DataFrame(data)
     st.bar_chart(df.set_index("Parametre"))
+
 
