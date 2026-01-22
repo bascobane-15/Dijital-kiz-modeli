@@ -8,98 +8,83 @@ from datetime import datetime
 # Sayfa Yapılandırması
 st.set_page_config(page_title="NursTwin-Home Digital Twin", layout="wide")
 
-# --- 1. VERİ TOPLAMA VE ÖN İŞLEME (Simülasyon) ---
+# --- VERİ TOPLAMA SİMÜLASYONU ---
 def get_sensor_data():
-    """IoT ve Giyilebilir Sensörlerden veri akışını simüle eder."""
     return {
-        "timestamp": datetime.now().strftime("%H:%M:%S"),
-        "nabiz": np.random.randint(60, 110),
-        "spo2": np.random.randint(94, 100),
-        "hareket": np.random.choice(["Hareketsiz", "Yatakta Dönme", "Ayağa Kalkma"]),
-        "sicaklik": round(np.random.uniform(22.0, 26.0), 1),
-        "nem": np.random.randint(40, 60)
+        "Zaman": datetime.now().strftime("%H:%M:%S"),
+        "Nabız (BPM)": np.random.randint(65, 105),
+        "SpO2 (%)": np.random.randint(93, 100),
+        "Vücut Isısı (°C)": round(np.random.uniform(36.2, 37.8), 1),
+        "Hareket Durumu": np.random.choice(["Stabil", "Hareketli", "Yatakta Dönme"]),
+        "Oda Nemi (%)": np.random.randint(40, 55)
     }
 
-# --- 2. DİJİTAL İKİZ MOTORU (Veri Füzyonu & Karar Destek) ---
-def analyze_data(data):
-    """Hemşirelik Karar Destek Çıktıları ve NIC Önerileri."""
-    status = "Normal"
-    nic_suggestion = "Rutin izleme devam ediyor."
-    alert_level = "success"
+# --- KARAR DESTEK MOTORU ---
+def analyze_patient(data):
+    if data["Nabız (BPM)"] > 100 or data["SpO2 (%)"] < 94:
+        return "⚠️ KRİTİK", "NIC: Vital Bulguların Sık Takibi & Oksijen Desteği", "red"
+    elif data["Vücut Isısı (°C)"] > 37.5:
+        return "🟡 UYARI", "NIC: Ateş Yönetimi & Sıvı Takibi", "orange"
+    return "✅ NORMAL", "Rutin İzlem: Veri akışı stabil.", "green"
 
-    if data["nabiz"] > 100 or data["spo2"] < 95:
-        status = "Kritik: Fizyolojik Risk"
-        nic_suggestion = "NIC: Vital Bulguların İzlenmesi & Oksijen Terapi Hazırlığı"
-        alert_level = "danger"
-    elif data["hareket"] == "Ayağa Kalkma":
-        status = "Uyarı: Düşme Riski"
-        nic_suggestion = "NIC: Düşme Önleme Protokolü Aktivasyonu"
-        alert_level = "warning"
-        
-    return status, nic_suggestion, alert_level
+# --- ARAYÜZ ---
+st.title("🏥 NursTwin-Home: Gelişmiş Dijital İkiz Paneli")
 
-# --- 3. HEMŞİRE ARAYÜZÜ (Streamlit UI) ---
-st.title("🏥 NursTwin-Home: Hemşirelik Dijital İkiz Paneli")
-st.markdown(f"**Hasta & Ev Ortamı Takibi** | Son Güncelleme: {datetime.now().strftime('%Y-%m-%d')}")
+# Sidebar: Veri Yönetimi
+st.sidebar.header("📊 Veri Kayıt Yönetimi")
+if 'db' not in st.session_state:
+    st.session_state.db = pd.DataFrame()
 
-# Kenar Çubuğu - Cihaz Durumu
-st.sidebar.header("İletişim Katmanı")
-st.sidebar.success("MQTT: Bağlı")
-st.sidebar.success("Wi-Fi / BLE: Aktif")
+# Dosyayı İndirme Butonu
+if not st.session_state.db.empty:
+    csv = st.session_state.db.to_csv(index=False).encode('utf-8-sig')
+    st.sidebar.download_button(
+        label="📥 Verileri Excel Olarak İndir",
+        data=csv,
+        file_name=f"NursTwin_Kayit_{datetime.now().strftime('%d_%m_%Y')}.csv",
+        mime='text/csv',
+    )
+    if st.sidebar.button("🗑️ Kayıtları Temizle"):
+        st.session_state.db = pd.DataFrame()
+        st.rerun()
 
-# Dashboard Alanı
-col1, col2, col3 = st.columns(3)
+# Ana Panel Alanı
 placeholder = st.empty()
 
-# Veri Geçmişi için DataFrame
-if 'history' not in st.session_state:
-    st.session_state.history = pd.DataFrame(columns=["Zaman", "Nabız", "SpO2", "Durum"])
-
-# --- GERİBİLDİRİM DÖNGÜSÜ (Canlı Döngü) ---
 while True:
-    current_data = get_sensor_data()
-    status, nic, alert_type = analyze_data(current_data)
+    current = get_sensor_data()
+    status, nic_advice, color = analyze_patient(current)
     
-    # Geçmişe ekle
-    new_row = {"Zaman": current_data["timestamp"], "Nabız": current_data["nabiz"], 
-               "SpO2": current_data["spo2"], "Durum": status}
-    st.session_state.history = pd.concat([pd.DataFrame([new_row]), st.session_state.history]).head(10)
+    # Veriyi hafızaya ekle
+    temp_df = pd.DataFrame([current])
+    temp_df['Durum'] = status
+    st.session_state.db = pd.concat([temp_df, st.session_state.db]).head(100)
 
     with placeholder.container():
         # Metrik Kartları
-        m1, m2, m3, m4 = st.columns(4)
-        m1.metric("Nabız (BPM)", current_data["nabiz"])
-        m2.metric("SpO2 (%)", current_data["spo2"])
-        m3.metric("Ortam Isısı", f"{current_data['sicaklik']}°C")
-        m4.metric("Hareket", current_data["hareket"])
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Nabız", f"{current['Nabız (BPM)']} bpm")
+        c2.metric("SpO2", f"%{current['SpO2 (%)']}")
+        c3.metric("Ateş", f"{current['Vücut Isısı (°C)']}°C")
+        c4.metric("Hareket", current['Hareket Durumu'])
 
         st.divider()
+        col_left, col_right = st.columns([2, 1])
 
-        # Grafik ve Karar Destek
-        left_col, right_col = st.columns([2, 1])
-
-        with left_col:
-            st.subheader("Fizyolojik Veri Trendi")
+        with col_left:
+            st.subheader("📈 Anlık Fizyolojik Grafik")
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=st.session_state.history["Zaman"], y=st.session_state.history["Nabız"], name="Nabız"))
-            fig.update_layout(height=300, margin=dict(l=0, r=0, t=0, b=0))
+            fig.add_trace(go.Scatter(y=st.session_state.db["Nabız (BPM)"].iloc[::-1], name="Nabız", line=dict(color='red')))
+            fig.add_trace(go.Scatter(y=st.session_state.db["SpO2 (%)"].iloc[::-1], name="SpO2", line=dict(color='blue')))
+            fig.update_layout(height=350, margin=dict(l=0, r=0, t=10, b=0))
             st.plotly_chart(fig, use_container_width=True)
 
-        with right_col:
-            st.subheader("Hemşirelik Karar Destek")
-            if alert_type == "danger":
-                st.error(f"**DURUM:** {status}")
-            elif alert_type == "warning":
-                st.warning(f"**DURUM:** {status}")
-            else:
-                st.info(f"**DURUM:** {status}")
+        with col_right:
+            st.subheader("📋 Hemşire Karar Destek")
+            st.markdown(f"### <span style='color:{color}'>{status}</span>", unsafe_allow_html=True)
+            st.info(f"**Önerilen Müdahale:**\n\n{nic_advice}")
             
-            st.info(f"💡 **Öneri:** {nic}")
-            
-            if st.button("Hemşire Müdahalesini Onayla"):
-                st.success("Müdahale kaydedildi, Dijital İkiz güncellendi.")
+        st.subheader("📄 Son Veri Kayıtları")
+        st.table(st.session_state.db.head(5))
 
-        st.subheader("Son Veri Kayıtları")
-        st.table(st.session_state.history)
-
-    time.sleep(3) # 3 saniyede bir güncelle (Gerçek zamanlı simülasyon)
+    time.sleep(3)
