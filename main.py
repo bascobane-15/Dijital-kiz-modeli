@@ -52,7 +52,7 @@ with tabs[0]:
 # ------------------------------------------------
 # İNSÜLİN SEKME
 # ------------------------------------------------
-    st.subheader("İnsülin – Glukagon Antagonizması")
+      st.subheader("İnsülin – Glukagon Antagonizması")
 
     glucose = st.slider("Kan Glikoz Alımı", 0, 100, 60)
 
@@ -72,26 +72,6 @@ with tabs[0]:
         st.warning("⚠️ Glukagon baskın → Kan şekeri yükseltiliyor")
     else:
         st.info("ℹ️ Hormonlar dengede → Homeostaz sağlanıyor")
-
-
-    if insulin < 20:
-        st.error("""
-        ❗ **İnsülin Eksikliği**
-        - Kan şekeri yükselir  
-        - Hücreler glikozu kullanamaz  
-
-        **İlişkili Hastalık:**  
-        - Diyabet
-        """)
-
-    if glucagon > 70:
-        st.warning("""
-        ⚠️ **Glukagon Fazlalığı**
-        - Sürekli kan şekeri yükselmesi  
-
-        **İlişkili Durum:**  
-        - Hiperglisemi
-        """)
 
 
 # ------------------------------------------------
@@ -130,6 +110,7 @@ with tabs[2]:
 
 st.divider()
 st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
+
 
 
 
