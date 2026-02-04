@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+
 
 st.set_page_config(page_title="BioTwin-Systems", layout="centered")
 
@@ -181,6 +183,7 @@ with tabs[3]:
         """)
     else:
         st.info("ℹ️ Kalsiyum dengede → İskelet sistemi homeostazı sağlanıyor")
+
 
 
 
