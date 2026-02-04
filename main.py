@@ -15,8 +15,6 @@ tabs = st.tabs([
     "🟣 Tiroksin",
     "🟢 Parathormon–Kalsitonin"
 ])
-
-
 # ------------------------------------------------
 # KORTİZOL SEKME
 # ------------------------------------------------
@@ -183,6 +181,7 @@ with tabs[3]:
         """)
     else:
         st.info("ℹ️ Kalsiyum dengede → İskelet sistemi homeostazı sağlanıyor")
+
 
 
 
