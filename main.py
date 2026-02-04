@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 st.set_page_config(page_title="BioTwin-Systems", layout="centered")
 
@@ -51,23 +52,27 @@ with tabs[0]:
 # ------------------------------------------------
 # İNSÜLİN SEKME
 # ------------------------------------------------
-with tabs[1]:
-    st.header("İnsülin – Glukagon Dengesi (Antagonist Hormonlar)")
+    st.subheader("İnsülin – Glukagon Antagonizması")
 
     glucose = st.slider("Kan Glikoz Alımı", 0, 100, 60)
 
     insulin = max(0, glucose - 30)
     glucagon = max(0, 70 - glucose)
 
-    st.metric("İnsülin Düzeyi", insulin)
-    st.metric("Glukagon Düzeyi", glucagon)
+    df = pd.DataFrame({
+        "Hormon": ["İnsülin", "Glukagon"],
+        "Düzey": [insulin, glucagon]
+    })
+
+    st.bar_chart(df.set_index("Hormon"))
 
     if insulin > glucagon:
         st.success("✅ İnsülin baskın → Kan şekeri düşürülüyor")
     elif glucagon > insulin:
         st.warning("⚠️ Glukagon baskın → Kan şekeri yükseltiliyor")
     else:
-        st.info("ℹ️ Denge durumu")
+        st.info("ℹ️ Hormonlar dengede → Homeostaz sağlanıyor")
+
 
     if insulin < 20:
         st.error("""
@@ -125,6 +130,7 @@ with tabs[2]:
 
 st.divider()
 st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
+
 
 
 
