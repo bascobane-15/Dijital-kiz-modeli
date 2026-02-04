@@ -1,99 +1,82 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="NursTwin-Home", layout="wide")
-st.title("🏠 NursTwin-Home")
-st.subheader("Evde Bakım Hastası için Dijital İkiz Karar Destek Paneli")
+st.set_page_config(page_title="BioTwin-Systems", layout="centered")
 
-# -------------------
-# SOL PANEL – GİRDİLER
-# -------------------
-st.sidebar.header("📥 Hasta Parametreleri")
+st.title("🧠🧪 BioTwin-Systems")
+st.subheader("Sinir ve Endokrin Sistem Dijital İkizi")
 
-nabiz = st.sidebar.slider("Nabız (bpm)", 40, 140, 80)
-spo2 = st.sidebar.slider("SpO₂ (%)", 80, 100, 96)
-hrv = st.sidebar.slider("HRV (ms)", 10, 120, 60)
-stres = st.sidebar.selectbox("Psikolojik Stres", ["Düşük", "Orta", "Yüksek"])
+st.markdown(
+"""
+Bu dijital ikiz, **hormon düzeyleri ile fizyolojik sonuçlar arasındaki ilişkileri**
+etkileşimli olarak gözlemlemek amacıyla geliştirilmiştir.
+"""
+)
 
-# -------------------
-# RİSK HESAPLAMA
-# -------------------
-risk = 0
+st.divider()
 
-if nabiz < 50 or nabiz > 110:
-    risk += 25
+# -----------------------------
+# ÇEVRESEL DEĞİŞKENLER
+# -----------------------------
+st.header("🌍 Çevresel ve Fizyolojik Değişkenler")
 
-if spo2 < 92:
-    risk += 30
+stress = st.slider("Stres Düzeyi", 0, 100, 50)
+sleep = st.slider("Uyku Süresi (saat/gün)", 0, 10, 7)
+nutrition = st.slider("Beslenme Düzeyi", 0, 100, 60)
 
-if hrv < 40:
-    risk += 25
+st.divider()
 
-if stres == "Orta":
-    risk += 10
-elif stres == "Yüksek":
-    risk += 20
+# -----------------------------
+# HORMON DÜZEYLERİ
+# -----------------------------
+st.header("🧬 Hormon Düzeyleri")
 
-# -------------------
-# SAĞ PANEL – ÇIKTILAR
-# -------------------
-col1, col2 = st.columns(2)
+kortizol = st.slider("Kortizol", 0, 100, stress)
+insulin = st.slider("İnsülin", 0, 100, nutrition)
+tiroksin = st.slider("Tiroksin (T4)", 0, 100, 50)
 
-with col1:
-    st.header("🔢 Genel Risk Skoru")
-    st.metric(label="Risk Skoru", value=f"%{risk}")
+st.divider()
 
-if risk <= 40:
-    st.success("🟢 Stabil – Rutin izlem yeterli")
+# -----------------------------
+# FİZYOLOJİK ETKİLER
+# -----------------------------
+st.header("📊 Fizyolojik Tepkiler")
 
-    st.markdown("### 🩺 NANDA Hemşirelik Tanısı")
-    st.info("Sağlığı Geliştirmeye Hazır Olma")
+# Basitleştirilmiş model ilişkileri
+kan_sekeri = 100 + (kortizol * 0.5) - (insulin * 0.7)
+metabolizma = tiroksin * 1.2
+bagisiklik = max(0, 100 - kortizol * 0.6)
+enerji = max(0, (sleep * 10) + insulin - kortizol * 0.5)
 
-    st.markdown("### 📩 Hemşire Bilgilendirme Mesajı")
-    st.write(
-        "Hasta fizyolojik ve psikososyal açıdan stabil görünmektedir. "
-        "Rutin izlem ve mevcut bakım planının sürdürülmesi önerilir."
-    )
+df = pd.DataFrame({
+    "Parametre": ["Kan Şekeri", "Metabolizma Hızı", "Bağışıklık", "Enerji Düzeyi"],
+    "Değer": [kan_sekeri, metabolizma, bagisiklik, enerji]
+})
 
-elif risk <= 70:
-    st.warning("🟡 Riskli – Yakın izlem önerilir")
+st.bar_chart(df.set_index("Parametre"))
 
-    st.markdown("### 🩺 NANDA Hemşirelik Tanısı")
-    st.info("Deri Bütünlüğünde Bozulma Riski")
+st.divider()
 
-    st.markdown("### 📩 Hemşire Bilgilendirme Mesajı")
-    st.write(
-        "Hastada hareketlilik azalması ve fizyolojik değişiklikler gözlenmektedir. "
-        "Pozisyon değişim aralıklarının kısaltılması ve cilt bütünlüğünün yakından izlenmesi önerilir."
-    )
+# -----------------------------
+# KLİNİK YORUM
+# -----------------------------
+st.header("🩺 Dijital İkiz Klinik Yorum")
 
-else:
-    st.error("🔴 Yüksek Risk – Müdahale gerekli")
+if kortizol > 70:
+    st.warning("⚠️ Yüksek kortizol: Kronik stres, bağışıklık baskılanması ve uyku bozukluğu riski.")
+elif kortizol < 30:
+    st.info("ℹ️ Düşük kortizol: Stres yanıtı zayıf.")
 
-    st.markdown("### 🩺 NANDA Hemşirelik Tanısı")
-    st.info("Gaz Değişiminde Bozulma / Aktivite İntoleransı")
+if insulin < 30:
+    st.error("❗ İnsülin eksikliği: Hiperglisemi ve diyabet riski.")
+elif insulin > 70:
+    st.warning("⚠️ İnsülin fazlalığı: Hipoglisemi riski.")
 
-    st.markdown("### 📩 Hemşire Acil Uyarı Mesajı")
-    st.write(
-        "Hastada ciddi fizyolojik riskler tespit edilmiştir. "
-        "Derhal hemşirelik müdahalesi uygulanmalı, gerekirse hekim bilgilendirilmelidir."
-    )
+if tiroksin < 30:
+    st.warning("⚠️ Tiroksin düşük: Hipotiroidi – yavaş metabolizma.")
+elif tiroksin > 70:
+    st.warning("⚠️ Tiroksin yüksek: Hipertiroidi – hızlı metabolizma.")
 
+st.success("✅ Sistemler arası etkileşim başarıyla gözlemleniyor.")
 
-with col2:
-    st.header("📊 Risk Bileşenleri")
-
-    data = {
-        "Parametre": ["Nabız", "SpO₂", "HRV", "Stres"],
-        "Risk Katkısı": [
-            25 if (nabiz < 50 or nabiz > 110) else 0,
-            30 if spo2 < 92 else 0,
-            25 if hrv < 40 else 0,
-            20 if stres == "Yüksek" else 10 if stres == "Orta" else 0
-        ]
-    }
-
-    df = pd.DataFrame(data)
-    st.bar_chart(df.set_index("Parametre"))
-
-
+st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
