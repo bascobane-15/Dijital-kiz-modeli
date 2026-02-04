@@ -9,8 +9,13 @@ st.markdown("Her hormon için ayrı senaryo üzerinden **neden–sonuç ilişkil
 
 st.divider()
 
-# SEKME YAPISI
-tabs = st.tabs(["🟠 Kortizol", "🔵 İnsülin", "🟣 Tiroksin"])
+tabs = st.tabs([
+    "🟠 Kortizol",
+    "🔵 İnsülin",
+    "🟣 Tiroksin",
+    "🟢 Parathormon–Kalsitonin"
+])
+
 
 # ------------------------------------------------
 # KORTİZOL SEKME
@@ -127,6 +132,7 @@ with tabs[2]:
 
 st.divider()
 st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
+
 
 
 
