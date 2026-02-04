@@ -133,9 +133,9 @@ with tabs[2]:
 st.divider()
 st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
 
-# ------------------------------------------------
+# --------------------------------------------------
 # PARATHORMON – KALSİTONİN SEKME
-# ------------------------------------------------
+# --------------------------------------------------
 
 with tabs[3]:
     st.header("Parathormon – Kalsitonin (Kalsiyum Dengesi)")
@@ -198,6 +198,7 @@ with tabs[3]:
         - Parathormon ve kalsitonin dengede
         - Homeostaz sağlanmış durumda
         """)
+)
 
 
 
