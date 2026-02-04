@@ -52,6 +52,7 @@ with tabs[0]:
 # ------------------------------------------------
 # İNSÜLİN SEKME
 # ------------------------------------------------
+
 with tabs[1]:
     st.header("İnsülin Hormonu (Kan Şekeri Düzenleyici)")
 
@@ -75,8 +76,19 @@ with tabs[1]:
     # ANTİAGONİST HORMON GRAFİĞİ
     df = pd.DataFrame({
         "Hormon": ["İnsülin", "Glukagon"],
-        "Düzey": [insulin]()
+        "Düzey": [insulin, glucagon]
+    })
 
+    st.subheader("Antagonist Hormonlar – Aynı Grafikte")
+    st.bar_chart(df.set_index("Hormon"))
+
+    # FİZYOLOJİK YORUM
+    if insulin > glucagon:
+        st.success("✅ İnsülin baskın → Kan şekeri düşürülüyor")
+    elif glucagon > insulin:
+        st.warning("⚠️ Glukagon baskın → Kan şekeri yükseltiliyor")
+    else:
+        st.info("ℹ️ Hormonlar dengede → Homeostaz sağlanıyor")
 
 
 # ------------------------------------------------
@@ -115,6 +127,7 @@ with tabs[2]:
 
 st.divider()
 st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
+
 
 
 
