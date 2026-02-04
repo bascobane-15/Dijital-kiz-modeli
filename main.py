@@ -133,6 +133,57 @@ with tabs[2]:
 st.divider()
 st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
 
+# ------------------------------------------------
+# PARATHORMON – KALSİTONİN SEKME
+# ------------------------------------------------
+with tabs[3]:
+    st.header("Parathormon – Kalsitonin (Kalsiyum Dengesi)")
+
+    st.markdown("""
+    Parathormon (PTH) ve kalsitonin hormonları **antagonist** etki göstererek
+    kandaki kalsiyum düzeyinin düzenlenmesini sağlar.
+    """)
+
+    # FİZYOLOJİK GİRDİ
+    calcium = st.slider("Kandaki Kalsiyum Düzeyi", 0, 100, 50)
+
+    # HORMON DÜZEYLERİ (basitleştirilmiş model)
+    parathormon = max(0, 70 - calcium)
+    kalsitonin = max(0, calcium - 30)
+
+    # HORMON DÜZEYLERİ GÖSTERİM
+    col1, col2 = st.columns(2)
+    col1.metric("Parathormon (PTH)", parathormon)
+    col2.metric("Kalsitonin", kalsitonin)
+
+    # ANTİAGONİST HORMON GRAFİĞİ
+    df = pd.DataFrame({
+        "Hormon": ["Parathormon (PTH)", "Kalsitonin"],
+        "Düzey": [parathormon, kalsitonin]
+    })
+
+    st.subheader("Antagonist Hormonlar – Aynı Grafikte")
+    st.bar_chart(df.set_index("Hormon"))
+
+    # FİZYOLOJİK VE KLİNİK YORUM
+    if parathormon > kalsitonin:
+        st.warning("""
+        ⚠️ **Parathormon Baskın**
+        - Kemiklerden kana kalsiyum geçişi artar  
+        - Kemik mineral yoğunluğu azalabilir  
+
+        **İlişkili Durum:**  
+        - Osteoporoz riski
+        """)
+    elif kalsitonin > parathormon:
+        st.success("""
+        ✅ **Kalsitonin Baskın**
+        - Kalsiyum kemiklerde tutulur  
+        - Kemik yapısı korunur
+        """)
+    else:
+        st.info("ℹ️ Kalsiyum dengede → İskelet sistemi homeostazı sağlanıyor")
+
 
 
 
