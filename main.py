@@ -198,14 +198,3 @@ with tabs[3]:
         - Parathormon ve kalsitonin dengede
         - Homeostaz sağlanmış durumda
         """)
-)
-
-
-
-
-
-
-
-
-
-
