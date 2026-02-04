@@ -1,28 +1,15 @@
-import pandas as pd
 import streamlit as st
 
-st.subheader("İnsülin – Glukagon Antagonizması (Kan Şekeri Dengesi)")
+st.set_page_config(page_title="BioTwin-Systems", layout="centered")
 
-glucose = st.slider("Kan Glikoz Alımı", 0, 100, 60)
+st.title("🧠 BioTwin-Systems")
+st.subheader("Sinir ve Endokrin Sistem Dijital İkizi")
+st.markdown("Her hormon için ayrı senaryo üzerinden **neden–sonuç ilişkileri** gözlemlenir.")
 
-insulin = max(0, glucose - 30)
-glucagon = max(0, 70 - glucose)
+st.divider()
 
-df = pd.DataFrame({
-    "Hormon": ["İnsülin", "Glukagon"],
-    "Düzey": [insulin, glucagon]
-})
-
-st.bar_chart(df.set_index("Hormon"))
-
-# Biyolojik yorum
-if insulin > glucagon:
-    st.success("✅ İnsülin baskın → Kan şekeri düşürülüyor")
-elif glucagon > insulin:
-    st.warning("⚠️ Glukagon baskın → Kan şekeri yükseltiliyor")
-else:
-    st.info("ℹ️ Hormonlar dengede → Homeostaz sağlanıyor")
-
+# SEKME YAPISI
+tabs = st.tabs(["🟠 Kortizol", "🔵 İnsülin", "🟣 Tiroksin"])
 
 # ------------------------------------------------
 # KORTİZOL SEKME
@@ -138,5 +125,6 @@ with tabs[2]:
 
 st.divider()
 st.caption("BioTwin-Systems | Eğitim Amaçlı Dijital İkiz Modeli")
+
 
 
