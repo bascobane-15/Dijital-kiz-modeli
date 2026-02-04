@@ -1,19 +1,12 @@
 import streamlit as st
 import pandas as pd
-
-st.set_page_config(page_title="BioTwin-Systems", layout="centered")
-
-st.title("🧠 BioTwin-Systems")
-st.subheader("Sinir ve Endokrin Sistem Dijital İkizi")
-st.markdown("Her hormon için ayrı senaryo üzerinden **neden–sonuç ilişkileri** gözlemlenir.")
-
-st.divider()
+import matplotlib.pyplot as plt
 
 tabs = st.tabs([
-    "🟠 Kortizol",
-    "🔵 İnsülin",
-    "🟣 Tiroksin",
-    "🟢 Parathormon–Kalsitonin"
+    "Kortizol",
+    "İnsülin",
+    "Tiroksin",
+    "Parathormon – Kalsitonin"
 ])
 
 
@@ -198,3 +191,4 @@ with tabs[3]:
         - Parathormon ve kalsitonin dengede
         - Homeostaz sağlanmış durumda
         """)
+
