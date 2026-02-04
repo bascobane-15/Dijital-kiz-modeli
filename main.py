@@ -57,7 +57,6 @@ with tabs[0]:
 # ------------------------------------------------
 # İNSÜLİN SEKME
 # ------------------------------------------------
-
 with tabs[1]:
     st.header("İnsülin Hormonu (Kan Şekeri Düzenleyici)")
 
@@ -183,6 +182,7 @@ with tabs[3]:
         """)
     else:
         st.info("ℹ️ Kalsiyum dengede → İskelet sistemi homeostazı sağlanıyor")
+
 
 
 
